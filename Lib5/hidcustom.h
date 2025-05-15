@@ -1,6 +1,11 @@
+#ifndef HIDCUSTOM_H
+#define HIDCUSTOM_H
+
+#include <Arduino.h>
 #include <hidboot.h>
 #include "ImprovedMouse.h"
 
+// Estrutura que armazena informações do mouse
 struct CUSTOMMOUSEINFO
 {
   uint8_t buttons;
@@ -9,6 +14,7 @@ struct CUSTOMMOUSEINFO
   int8_t wheel;
 };
 
+// Parser de relatórios do mouse
 class MouseRptParser : public MouseReportParser
 {
   union
@@ -32,9 +38,11 @@ protected:
   void OnMiddleButtonUp(CUSTOMMOUSEINFO *mi);
   void OnMiddleButtonDown(CUSTOMMOUSEINFO *mi);
 
-  void OnPrevButtonUp(CUSTOMMOUSEINFO *mi);
-  void OnPrevButtonDown(CUSTOMMOUSEINFO *mi);
+  void OnBackButtonUp(CUSTOMMOUSEINFO *mi);
+  void OnBackButtonDown(CUSTOMMOUSEINFO *mi);
 
-  void OnNextButtonUp(CUSTOMMOUSEINFO *mi);
-  void OnNextButtonDown(CUSTOMMOUSEINFO *mi);
+  void OnForwardButtonUp(CUSTOMMOUSEINFO *mi);
+  void OnForwardButtonDown(CUSTOMMOUSEINFO *mi);
 };
+
+#endif // HIDCUSTOM_H

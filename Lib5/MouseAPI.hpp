@@ -1,29 +1,19 @@
 /*
-Copyright (c) 2014-2015 NicoHood
-See the readme for credit to other people.
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+ * MouseAPI.hpp - Implementação inline da API do mouse
+ */
 
 // Include guard
 #pragma once
 
+// Definição do ATTRIBUTE_PACKED se não estiver definido
+#ifndef ATTRIBUTE_PACKED
+#define ATTRIBUTE_PACKED __attribute__((packed, aligned(1)))
+#endif
+
+// Implementação das funções inline
 MouseAPI::MouseAPI(void) : _buttons(0)
 {
-    // Empty
+    // Sem inicialização adicional necessária
 }
 
 void MouseAPI::begin(void)
@@ -47,11 +37,14 @@ void MouseAPI::click(uint8_t b)
 
 void MouseAPI::move(signed char x, signed char y, signed char wheel)
 {
+    // Cria o relatório HID para o mouse
     HID_MouseReport_Data_t report;
     report.buttons = _buttons;
     report.xAxis = x;
     report.yAxis = y;
     report.wheel = wheel;
+    
+    // Envia o relatório HID para o PC
     SendReport(&report, sizeof(report));
 }
 
@@ -82,7 +75,30 @@ void MouseAPI::releaseAll(void)
 
 bool MouseAPI::isPressed(uint8_t b)
 {
-    if ((b & _buttons) > 0)
-        return true;
-    return false;
+    return ((_buttons & b) != 0);
+}
+
+// Implementações das funções USB para configuração do dispositivo
+void USB_SetVID(uint16_t vid) {
+    USBDevice.setVendorId(vid);
+}
+
+void USB_SetPID(uint16_t pid) {
+    USBDevice.setProductId(pid);
+}
+
+void USB_SetProductVersion(uint16_t version) {
+    USBDevice.setDeviceVersion(version);
+}
+
+void USB_SetManufacturerString(const char* manufacturer) {
+    USBDevice.setManufacturerString(manufacturer);
+}
+
+void USB_SetProductString(const char* product) {
+    USBDevice.setProductString(product);
+}
+
+void USB_SetSerialNumber(const char* serial) {
+    USBDevice.setSerialNumberString(serial);
 }
